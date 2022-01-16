@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomOutlinedBox" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:hint">@string/search_hint</item>
+        <item name="counterEnabled">@bool/text_input_layout_counter_enabled</item>
+        <item name="counterMaxLength">@integer/text_input_layout_counter_max_length</item>
+        <item name="boxStrokeErrorColor">@color/color_error</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/bottom_sheet_dialog_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/bottom_sheet_dialog_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/bottom_sheet_dialog_corner_radius</item>
+        <item name="boxCornerRadiusTopStart">@dimen/bottom_sheet_dialog_corner_radius</item>
+        <item name="endIconMode">clear_text</item>
+    </style>
+</resources>
