@@ -9,16 +9,18 @@ import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
-import com.example.dictionary.interfaceadapters.presenters.IPresenter
 import com.example.dictionary.interfaceadapters.presenters.Presenter
+import moxy.MvpAppCompatActivity
+import moxy.ktx.moxyPresenter
 
-class MainActivity : BaseActivity<AppState>() {
+class MainActivity : MvpAppCompatActivity(), View {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 
     private lateinit var binding: ActivityMainBinding
+    private val presenter by moxyPresenter { Presenter() }
     private var adapter: RecyclerViewAdapter? = null
     private val onListItemClickListener = object : RecyclerViewAdapter.OnListItemClickListener {
         override fun onItemClick(data: Word) {
@@ -39,10 +41,6 @@ class MainActivity : BaseActivity<AppState>() {
                 })
             }.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-    }
-
-    override fun createPresenter(): IPresenter<AppState, View> {
-        return Presenter()
     }
 
     override fun renderData(appState: AppState) {

@@ -51,7 +51,7 @@ class WebDataSource : DataSource<List<Word>> {
         private var responseCode: Int = 0
 
         override fun intercept(chain: Interceptor.Chain): Response {
-            return chain.proceed(chain.request()).also { responseCode = it.code() }
+            return chain.proceed(chain.request()).also { responseCode = it.code }
         }
 
         fun getResponseCode(): ServerResponseStatusCode {
