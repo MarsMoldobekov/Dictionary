@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
@@ -22,11 +23,6 @@ class MainActivity : MvpAppCompatActivity(), View {
     private lateinit var binding: ActivityMainBinding
     private val presenter by moxyPresenter { Presenter() }
     private var adapter: RecyclerViewAdapter? = null
-    private val onListItemClickListener = object : RecyclerViewAdapter.OnListItemClickListener {
-        override fun onItemClick(data: Word) {
-            Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +39,20 @@ class MainActivity : MvpAppCompatActivity(), View {
         }
     }
 
+    override fun init() {
+        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        adapter = RecyclerViewAdapter(presenter.wordsListPresenter)
+        binding.mainActivityRecyclerview.adapter = adapter
+    }
+
+    override fun showToast(data: Word) {
+        Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun updateList(diffResult: DiffUtil.DiffResult) {
+        adapter?.let { diffResult.dispatchUpdatesTo(it) }
+    }
+
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
@@ -51,14 +61,6 @@ class MainActivity : MvpAppCompatActivity(), View {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
                     showViewSuccess()
-                    if (adapter == null) {
-                        binding.mainActivityRecyclerview.layoutManager =
-                            LinearLayoutManager(applicationContext)
-                        binding.mainActivityRecyclerview.adapter =
-                            RecyclerViewAdapter(onListItemClickListener, dataModel)
-                    } else {
-                        adapter!!.setData(dataModel)
-                    }
                 }
             }
             is AppState.Loading -> {

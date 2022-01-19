@@ -15,6 +15,7 @@
             android:id="@+id/header_textview_recycler_item"
             android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
             android:layout_height="wrap_content"
             style="@style/HeaderTextStyle"
             tools:text="Header"/>
@@ -24,6 +25,7 @@
             android:layout_width="wrap_content"
             style="@style/BaseTextStyle"
             android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_medium"
             android:layout_height="wrap_content"
             tools:text="@string/description_textview_recycler_item_example"/>
     </LinearLayout>

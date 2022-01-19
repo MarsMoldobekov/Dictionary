@@ -1,52 +1,40 @@
 package com.example.dictionary.frameworks.ui
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dictionary.R
 import com.example.dictionary.databinding.RowItemBinding
-import com.example.dictionary.entities.Word
+import com.example.dictionary.interfaceadapters.presenters.IWordsListPresenter
 
 class RecyclerViewAdapter(
-    private var onListItemClickListener: OnListItemClickListener,
-    private var data: List<Word>
+    private val presenter: IWordsListPresenter
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
-
-    fun setData(data: List<Word>) {
-        this.data = data
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.row_item, parent, false)
-        )
+            RowItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        ).apply { itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) } }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
+        presenter.bindView(holder.apply { pos = position })
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return presenter.getCount()
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val binding get() = RowItemBinding.bind(itemView)
+    inner class ViewHolder(private val viewBinding: RowItemBinding) :
+        RecyclerView.ViewHolder(viewBinding.root), IWordItemView {
 
-        fun bind(data: Word) {
-            with(binding) {
-                headerTextviewRecyclerItem.text = data.text
-                descriptionTextviewRecyclerItem.text =
-                    data.meanings?.get(0)?.translation?.translation
-            }
+        override var pos: Int = -1
 
-            itemView.setOnClickListener { onListItemClickListener.onItemClick(data) }
+        override fun setHeader(header: String) {
+            viewBinding.headerTextviewRecyclerItem.text = header
         }
-    }
 
-    interface OnListItemClickListener {
-        fun onItemClick(data: Word)
+        override fun setDescription(description: String) {
+            viewBinding.descriptionTextviewRecyclerItem.text = description
+        }
     }
 }
