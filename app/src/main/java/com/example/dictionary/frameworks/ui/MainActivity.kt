@@ -4,56 +4,55 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
-import androidx.recyclerview.widget.DiffUtil
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
-import com.example.dictionary.interfaceadapters.presenters.Presenter
-import moxy.MvpAppCompatActivity
-import moxy.ktx.moxyPresenter
+import com.example.dictionary.interfaceadapters.viewmodels.ViewModel
 
-class MainActivity : MvpAppCompatActivity(), View {
+class MainActivity : AppCompatActivity() {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 
     private lateinit var binding: ActivityMainBinding
-    private val presenter by moxyPresenter { Presenter() }
-    private var adapter: RecyclerViewAdapter? = null
+    private val viewModel: ViewModel by lazy { ViewModelProvider(this)[ViewModel::class.java] }
+    private val adapter: RecyclerViewAdapter =
+        RecyclerViewAdapter(object : RecyclerViewAdapter.OnListItemClickListener {
+            override fun onItemClick(data: Word) {
+                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+            }
+        })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         binding.searchFab.setOnClickListener {
             SearchDialogFragment.newInstance().apply {
-                this.setOnSearchClickListener(object : SearchDialogFragment.OnSearchClickListener {
+                this.setOnSearchClickListener(object :
+                    SearchDialogFragment.OnSearchClickListener {
                     override fun onClick(wordToSearch: String) {
-                        presenter.getData(wordToSearch, true)
+                        viewModel.getData(wordToSearch, true)
                     }
                 })
             }.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
+
+        with(binding) {
+            mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+            mainActivityRecyclerview.adapter = adapter
+        }
+
+        viewModel.getLiveData().observe(this) { renderData(it) }
     }
 
-    override fun init() {
-        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
-        adapter = RecyclerViewAdapter(presenter.wordsListPresenter)
-        binding.mainActivityRecyclerview.adapter = adapter
-    }
-
-    override fun showToast(data: Word) {
-        Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun updateList(diffResult: DiffUtil.DiffResult) {
-        adapter?.let { diffResult.dispatchUpdatesTo(it) }
-    }
-
-    override fun renderData(appState: AppState) {
+    private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
                 val dataModel = appState.data
@@ -61,6 +60,7 @@ class MainActivity : MvpAppCompatActivity(), View {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
                     showViewSuccess()
+                    adapter.data = appState.data as MutableList<Word>
                 }
             }
             is AppState.Loading -> {
@@ -84,7 +84,7 @@ class MainActivity : MvpAppCompatActivity(), View {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            viewModel.getData("hi", true)
         }
     }
 
