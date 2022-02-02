@@ -3,16 +3,11 @@ package com.example.dictionary.interfaceadapters.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.dictionary.entities.AppState
-import com.example.dictionary.frameworks.room.RoomDatabaseDataSource
-import com.example.dictionary.frameworks.web.WebDataSource
-import com.example.dictionary.interactors.Interactor
-import com.example.dictionary.interfaceadapters.repositories.Repository
+import com.example.dictionary.entities.Word
+import com.example.dictionary.interactors.IInteractor
+import javax.inject.Inject
 
-class ViewModel(
-    private val interactor: Interactor = Interactor(
-        Repository(WebDataSource()), Repository(RoomDatabaseDataSource())
-    )
-) : BaseViewModel() {
+class MainViewModel @Inject constructor(private val interactor: IInteractor<List<Word>>) : BaseViewModel() {
 
     private val liveData = MutableLiveData<AppState>()
 
