@@ -1,33 +1,34 @@
 package com.example.dictionary.interfaceadapters.viewmodels
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.rx.ICompositeDisposableProvider
 import com.example.dictionary.frameworks.rx.ISchedulerProvider
 import com.example.dictionary.interactors.IInteractor
-import javax.inject.Inject
 
-//TODO: SavedStateHandle
-class MainViewModel @Inject constructor(
+class MainViewModel(
     private val interactor: IInteractor<List<Word>>,
     private val schedulerProvider: ISchedulerProvider,
-    private val compositeDisposableProvider: ICompositeDisposableProvider
+    private val compositeDisposableProvider: ICompositeDisposableProvider,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val liveData = MutableLiveData<AppState>()
+    companion object {
+        private const val LIVE_DATA_TAG = "LIVE_DATA_TAG"
+    }
 
     fun getData(word: String) {
         compositeDisposableProvider.add(
             interactor.getData(word)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { liveData.postValue(AppState.Loading(null)) }
+                .doOnSubscribe { savedStateHandle[LIVE_DATA_TAG] = AppState.Loading(null) }
                 .subscribe(
-                    { liveData.postValue(AppState.Success(it)) },
-                    { liveData.postValue(AppState.Error(it)) }
+                    { savedStateHandle[LIVE_DATA_TAG] = AppState.Success(it) },
+                    { savedStateHandle[LIVE_DATA_TAG] = AppState.Error(it) }
                 )
         )
     }
@@ -38,6 +39,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun getLiveData(): LiveData<AppState> {
-        return liveData
+        return savedStateHandle.getLiveData(LIVE_DATA_TAG)
     }
 }

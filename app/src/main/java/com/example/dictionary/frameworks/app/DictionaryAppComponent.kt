@@ -8,7 +8,6 @@ import com.example.dictionary.frameworks.ui.ActivityModule
 import com.example.dictionary.frameworks.web.AndroidNetworkStatusModule
 import com.example.dictionary.interactors.InteractorModule
 import com.example.dictionary.interfaceadapters.repositories.RepositoryModule
-import com.example.dictionary.interfaceadapters.viewmodels.ViewModelModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -22,7 +21,6 @@ import javax.inject.Singleton
         InteractorModule::class,
         SchedulerProviderModule::class,
         CompositeDisposableProviderModule::class,
-        ViewModelModule::class,
         ActivityModule::class,
         AndroidInjectionModule::class
     ]

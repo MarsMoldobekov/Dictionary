@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
@@ -11,6 +12,8 @@ import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModel
+import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
+import com.example.dictionary.interfaceadapters.viewmodels.SavedStateViewModelFactory
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -23,8 +26,10 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
     @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-    override lateinit var viewModel: MainViewModel
+    internal lateinit var mainViewModelFactory: MainViewModelFactory
+    override val viewModel: MainViewModel by viewModels {
+        SavedStateViewModelFactory(mainViewModelFactory, this)
+    }
 
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(object : RecyclerViewAdapter.OnListItemClickListener {
@@ -47,8 +52,6 @@ class MainActivity : BaseActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = viewModelFactory.create(MainViewModel::class.java)
 
         binding.searchFab.setOnClickListener {
             SearchDialogFragment.newInstance().apply {
