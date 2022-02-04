@@ -2,6 +2,8 @@ package com.example.dictionary.frameworks.app
 
 import android.content.Context
 import com.example.dictionary.frameworks.datasource.DataSourceModule
+import com.example.dictionary.frameworks.rx.CompositeDisposableProviderModule
+import com.example.dictionary.frameworks.rx.SchedulerProviderModule
 import com.example.dictionary.frameworks.ui.ActivityModule
 import com.example.dictionary.frameworks.web.AndroidNetworkStatusModule
 import com.example.dictionary.interactors.InteractorModule
@@ -18,6 +20,8 @@ import javax.inject.Singleton
         RepositoryModule::class,
         AndroidNetworkStatusModule::class,
         InteractorModule::class,
+        SchedulerProviderModule::class,
+        CompositeDisposableProviderModule::class,
         ViewModelModule::class,
         ActivityModule::class,
         AndroidInjectionModule::class
