@@ -1,12 +1,7 @@
 package com.example.dictionary.frameworks.ui
 
-import android.os.Bundle
-import android.os.PersistableBundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dictionary.R
 import com.example.dictionary.entities.AppState
-import com.example.dictionary.frameworks.utils.isNetworkAvailable
 import com.example.dictionary.interfaceadapters.viewmodels.BaseViewModel
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -16,34 +11,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     abstract val viewModel: BaseViewModel
 
-    protected var isNetworkAvailable: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        isNetworkAvailable = isNetworkAvailable(applicationContext)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isNetworkAvailable = isNetworkAvailable(applicationContext)
-        if (!isNetworkAvailable && isDialogNull()) {
-            showNoInternetConnectionDialog()
-        }
-    }
-
-    protected fun showNoInternetConnectionDialog() {
-        showAlertDialog(
-            getString(R.string.dialog_title_device_is_offline),
-            getString(R.string.dialog_message_device_is_offline)
-        )
-    }
-
     protected fun showAlertDialog(title: String, message: String) {
-        AlertDialogFragment.newInstance(title, message).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
-    }
-
-    private fun isDialogNull(): Boolean {
-        return supportFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null
+        AlertDialogFragment.newInstance(title, message)
+            .show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
     }
 
     abstract fun renderData(appState: AppState)

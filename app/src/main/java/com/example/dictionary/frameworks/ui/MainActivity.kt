@@ -10,7 +10,6 @@ import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
-import com.example.dictionary.frameworks.utils.isNetworkAvailable
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModel
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -38,12 +37,7 @@ class MainActivity : BaseActivity() {
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
             override fun onClick(wordToSearch: String) {
-                val isNetworkAvailable = isNetworkAvailable(applicationContext)
-                if (isNetworkAvailable) {
-                    viewModel.getData(wordToSearch, true)
-                } else {
-                    showNoInternetConnectionDialog()
-                }
+                viewModel.getData(wordToSearch)
             }
         }
 

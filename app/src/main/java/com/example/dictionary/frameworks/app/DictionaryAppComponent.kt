@@ -1,10 +1,9 @@
 package com.example.dictionary.frameworks.app
 
-import android.app.Application
+import android.content.Context
 import com.example.dictionary.frameworks.datasource.DataSourceModule
 import com.example.dictionary.frameworks.ui.ActivityModule
-import com.example.dictionary.frameworks.ui.MainActivity
-import com.example.dictionary.interactors.Interactor
+import com.example.dictionary.frameworks.web.AndroidNetworkStatusModule
 import com.example.dictionary.interactors.InteractorModule
 import com.example.dictionary.interfaceadapters.repositories.RepositoryModule
 import com.example.dictionary.interfaceadapters.viewmodels.ViewModelModule
@@ -17,6 +16,7 @@ import javax.inject.Singleton
     modules = [
         DataSourceModule::class,
         RepositoryModule::class,
+        AndroidNetworkStatusModule::class,
         InteractorModule::class,
         ViewModelModule::class,
         ActivityModule::class,
@@ -28,7 +28,7 @@ interface DictionaryAppComponent {
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun application(application: Application): Builder
+        fun applicationContext(context: Context): Builder
 
         fun build(): DictionaryAppComponent
     }

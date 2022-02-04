@@ -7,13 +7,14 @@ import com.example.dictionary.entities.Word
 import com.example.dictionary.interactors.IInteractor
 import javax.inject.Inject
 
+//TODO: SavedStateHandle
 class MainViewModel @Inject constructor(private val interactor: IInteractor<List<Word>>) : BaseViewModel() {
 
     private val liveData = MutableLiveData<AppState>()
 
-    fun getData(word: String, isOnline: Boolean) {
+    fun getData(word: String) {
         compositeDisposable.add(
-            interactor.getData(word, isOnline)
+            interactor.getData(word)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .doOnSubscribe { liveData.postValue(AppState.Loading(null)) }

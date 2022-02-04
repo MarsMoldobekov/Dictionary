@@ -13,7 +13,7 @@ class DictionaryApp : Application(), HasAndroidInjector {
     override fun onCreate() {
         super.onCreate()
         DaggerDictionaryAppComponent.builder()
-            .application(this)
+            .applicationContext(this)
             .build()
             .inject(this)
     }
