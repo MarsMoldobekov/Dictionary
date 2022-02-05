@@ -2,40 +2,43 @@ package com.example.dictionary.interfaceadapters.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
-import com.example.dictionary.frameworks.rx.ICompositeDisposableProvider
-import com.example.dictionary.frameworks.rx.ISchedulerProvider
 import com.example.dictionary.interactors.IInteractor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val interactor: IInteractor<List<Word>>,
-    private val schedulerProvider: ISchedulerProvider,
-    private val compositeDisposableProvider: ICompositeDisposableProvider,
-) : ViewModel() {
+) : BaseViewModel() {
 
     companion object {
         private const val LIVE_DATA_TAG = "LIVE_DATA_TAG"
     }
 
-    fun getData(word: String) {
-        compositeDisposableProvider.add(
-            interactor.getData(word)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { savedStateHandle[LIVE_DATA_TAG] = AppState.Loading(null) }
-                .subscribe(
-                    { savedStateHandle[LIVE_DATA_TAG] = AppState.Success(it) },
-                    { savedStateHandle[LIVE_DATA_TAG] = AppState.Error(it) }
-                )
-        )
+    override fun getData(word: String) {
+        savedStateHandle[LIVE_DATA_TAG] = AppState.Loading(null)
+        cancelJob()
+        viewModelCoroutineScope.launch { searchAsync(word) }
+    }
+
+    private suspend fun searchAsync(word: String) {
+        var result: List<Word>?
+        withContext(Dispatchers.IO) {
+            result = interactor.getData(word)
+        }
+        savedStateHandle[LIVE_DATA_TAG] = AppState.Success(result)
     }
 
     override fun onCleared() {
+        savedStateHandle[LIVE_DATA_TAG] = null
         super.onCleared()
-        compositeDisposableProvider.clear()
+    }
+
+    override fun handleThrowable(throwable: Throwable) {
+        savedStateHandle[LIVE_DATA_TAG] = AppState.Error(throwable)
     }
 
     fun getLiveData(): LiveData<AppState> {

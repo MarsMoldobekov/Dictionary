@@ -3,10 +3,6 @@ package com.example.dictionary.frameworks.di
 import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.datasource.DataSource
 import com.example.dictionary.frameworks.room.RoomDatabaseDataSource
-import com.example.dictionary.frameworks.rx.CompositeDisposableProvider
-import com.example.dictionary.frameworks.rx.ICompositeDisposableProvider
-import com.example.dictionary.frameworks.rx.ISchedulerProvider
-import com.example.dictionary.frameworks.rx.SchedulerProvider
 import com.example.dictionary.frameworks.web.AndroidNetworkStatus
 import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.example.dictionary.frameworks.web.WebDataSource
@@ -53,24 +49,8 @@ val interactorModule = module {
     }
 }
 
-val compositeDisposableProviderModule = module {
-    factory<ICompositeDisposableProvider> {
-        CompositeDisposableProvider()
-    }
-}
-
-val schedulerProviderModule = module {
-    factory<ISchedulerProvider> {
-        SchedulerProvider()
-    }
-}
-
 val viewModelFactoryModule = module {
     factory {
-        MainViewModelFactory(
-            interactor = get(),
-            schedulerProvider = get(),
-            compositeDisposableProvider = get()
-        )
+        MainViewModelFactory(interactor = get())
     }
 }

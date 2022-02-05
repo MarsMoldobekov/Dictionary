@@ -2,8 +2,6 @@ package com.example.dictionary.frameworks.web
 
 import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.datasource.DataSource
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import io.reactivex.Observable
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -18,12 +16,11 @@ class WebDataSource : DataSource<List<Word>> {
 
     private val api: ApiService = Retrofit.Builder().baseUrl(BASE_URL_LOCATIONS)
         .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(createOkHttpClient(BaseInterceptor.interceptor))
         .build().create(ApiService::class.java)
 
-    override fun getData(word: String): Observable<List<Word>> {
-        return api.search(word)
+    override suspend fun getData(word: String): List<Word> {
+        return api.searchAsync(word)
     }
 
     private fun createOkHttpClient(interceptor: Interceptor): OkHttpClient {

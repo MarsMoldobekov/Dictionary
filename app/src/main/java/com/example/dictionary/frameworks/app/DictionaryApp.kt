@@ -17,8 +17,6 @@ class DictionaryApp : Application() {
                     repositoryModule,
                     androidNetworkStatusModule,
                     interactorModule,
-                    compositeDisposableProviderModule,
-                    schedulerProviderModule,
                     viewModelFactoryModule
                 )
             )
