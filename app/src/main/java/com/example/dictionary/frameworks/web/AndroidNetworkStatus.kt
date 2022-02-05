@@ -6,9 +6,8 @@ import android.net.Network
 import android.net.NetworkRequest
 import androidx.core.content.getSystemService
 import io.reactivex.subjects.BehaviorSubject
-import javax.inject.Inject
 
-class AndroidNetworkStatus @Inject constructor(context: Context) {
+class AndroidNetworkStatus(context: Context) : IAndroidNetworkStatus {
     private val networkBehaviorSubject: BehaviorSubject<Boolean> = BehaviorSubject.create()
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
@@ -33,7 +32,7 @@ class AndroidNetworkStatus @Inject constructor(context: Context) {
         })
     }
 
-    fun isNetworkAvailable(): Boolean {
+    override fun isNetworkAvailable(): Boolean {
         return networkBehaviorSubject.value ?: false
     }
 }

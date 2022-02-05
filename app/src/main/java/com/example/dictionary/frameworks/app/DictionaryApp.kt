@@ -1,24 +1,27 @@
 package com.example.dictionary.frameworks.app
 
 import android.app.Application
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
+import com.example.dictionary.frameworks.di.*
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
-class DictionaryApp : Application(), HasAndroidInjector {
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+class DictionaryApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        DaggerDictionaryAppComponent.builder()
-            .applicationContext(this)
-            .build()
-            .inject(this)
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return dispatchingAndroidInjector
+        startKoin {
+            androidContext(this@DictionaryApp)
+            modules(
+                listOf(
+                    dataSourceModule,
+                    repositoryModule,
+                    androidNetworkStatusModule,
+                    interactorModule,
+                    compositeDisposableProviderModule,
+                    schedulerProviderModule,
+                    viewModelFactoryModule
+                )
+            )
+        }
     }
 }

@@ -10,10 +10,10 @@ import com.example.dictionary.frameworks.rx.ISchedulerProvider
 import com.example.dictionary.interactors.IInteractor
 
 class MainViewModel(
+    private val savedStateHandle: SavedStateHandle,
     private val interactor: IInteractor<List<Word>>,
     private val schedulerProvider: ISchedulerProvider,
     private val compositeDisposableProvider: ICompositeDisposableProvider,
-    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     companion object {

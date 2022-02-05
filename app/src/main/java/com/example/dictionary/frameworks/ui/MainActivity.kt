@@ -5,7 +5,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
@@ -14,8 +13,7 @@ import com.example.dictionary.entities.Word
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModel
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.SavedStateViewModelFactory
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class MainActivity : BaseActivity() {
     companion object {
@@ -25,8 +23,7 @@ class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    @Inject
-    internal lateinit var mainViewModelFactory: MainViewModelFactory
+    private val mainViewModelFactory: MainViewModelFactory by inject()
     override val viewModel: MainViewModel by viewModels {
         SavedStateViewModelFactory(mainViewModelFactory, this)
     }
@@ -47,7 +44,6 @@ class MainActivity : BaseActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)

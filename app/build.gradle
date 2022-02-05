@@ -41,14 +41,11 @@ android {
 }
 
 dependencies {
-    //Dagger
-    def daggerVersion = 2.40
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    kapt "com.google.dagger:dagger-android-support:$daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+    //Koin
+    def koinVersion = "3.1.2"
+    implementation "io.insert-koin:koin-core:$koinVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    implementation "io.insert-koin:koin-android-compat:$koinVersion"
 
     //ViewModel
     def lifecycleVersion = "2.4.0"

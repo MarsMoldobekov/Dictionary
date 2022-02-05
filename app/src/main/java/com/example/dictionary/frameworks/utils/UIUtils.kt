@@ -11,7 +11,7 @@ fun getStubAlertDialog(context: Context): AlertDialog {
 fun getAlertDialog(context: Context, title: String?, message: String?): AlertDialog {
     return AlertDialog.Builder(context)
         .setTitle(if (!title.isNullOrBlank()) title else context.getString(R.string.dialog_title_stub))
-        .setMessage(if (!message.isNullOrBlank()) message else null) //TODO: check empty string
+        .setMessage(if (!message.isNullOrBlank()) message else null)
         .setCancelable(true)
         .setPositiveButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         .create()

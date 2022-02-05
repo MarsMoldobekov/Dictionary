@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.example.dictionary.frameworks.utils.getAlertDialog
 import com.example.dictionary.frameworks.utils.getStubAlertDialog
 
-//TODO: refactor code
 class AlertDialogFragment : AppCompatDialogFragment() {
     companion object {
         private const val TITLE_EXTRA = "89cbce59-e28f-418f-b470-ff67125c2e2f"
