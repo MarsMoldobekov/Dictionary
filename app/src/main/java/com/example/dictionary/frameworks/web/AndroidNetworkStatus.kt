@@ -5,10 +5,10 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import androidx.core.content.getSystemService
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AndroidNetworkStatus(context: Context) : IAndroidNetworkStatus {
-    private val networkBehaviorSubject: BehaviorSubject<Boolean> = BehaviorSubject.create()
+    private val networkState = MutableStateFlow(false)
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
     init {
@@ -17,22 +17,22 @@ class AndroidNetworkStatus(context: Context) : IAndroidNetworkStatus {
         connectivityManager?.registerNetworkCallback(request, object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                networkBehaviorSubject.onNext(true)
+                networkState.value = true
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
-                networkBehaviorSubject.onNext(false)
+                networkState.value = false
             }
 
             override fun onUnavailable() {
                 super.onUnavailable()
-                networkBehaviorSubject.onNext(false)
+                networkState.value = false
             }
         })
     }
 
     override fun isNetworkAvailable(): Boolean {
-        return networkBehaviorSubject.value ?: false
+        return networkState.value
     }
 }
