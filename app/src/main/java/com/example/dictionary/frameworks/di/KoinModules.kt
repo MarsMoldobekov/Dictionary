@@ -1,7 +1,13 @@
 package com.example.dictionary.frameworks.di
 
+import androidx.room.Room
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.converter.Converter
+import com.example.dictionary.frameworks.converter.DataModelAndEntityConverter
 import com.example.dictionary.frameworks.datasource.DataSource
+import com.example.dictionary.frameworks.datasource.DataSourceLocal
+import com.example.dictionary.frameworks.room.DATABASE_NAME
+import com.example.dictionary.frameworks.room.HistoryDatabase
 import com.example.dictionary.frameworks.room.RoomDatabaseDataSource
 import com.example.dictionary.frameworks.web.AndroidNetworkStatus
 import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
@@ -9,27 +15,43 @@ import com.example.dictionary.frameworks.web.WebDataSource
 import com.example.dictionary.interactors.IInteractor
 import com.example.dictionary.interactors.Interactor
 import com.example.dictionary.interfaceadapters.repositories.IRepository
+import com.example.dictionary.interfaceadapters.repositories.IRepositoryLocal
 import com.example.dictionary.interfaceadapters.repositories.Repository
+import com.example.dictionary.interfaceadapters.repositories.RepositoryLocal
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+val roomDatabaseModule = module {
+    single {
+        Room.databaseBuilder(androidContext(), HistoryDatabase::class.java, DATABASE_NAME).build()
+    }
+    single {
+        get<HistoryDatabase>().historyDao()
+    }
+}
+
+val converterModule = module {
+    factory<Converter> {
+        DataModelAndEntityConverter()
+    }
+}
+
 val dataSourceModule = module {
-    single<DataSource<List<Word>>>(named(NAME_REMOTE)) {
+    single<DataSource<List<Word>>> {
         WebDataSource()
     }
-    single<DataSource<List<Word>>>(named(NAME_LOCAL)) {
-        RoomDatabaseDataSource()
+    single<DataSourceLocal<List<Word>>> {
+        RoomDatabaseDataSource(historyDao = get(), converter = get())
     }
 }
 
 val repositoryModule = module {
-    single<IRepository<List<Word>>>(named(NAME_REMOTE)) {
-        Repository(dataSource = get(qualifier = named(NAME_REMOTE)))
+    single<IRepository<List<Word>>> {
+        Repository(dataSource = get())
     }
-    single<IRepository<List<Word>>>(named(NAME_LOCAL)) {
-        Repository(dataSource = get(qualifier = named(NAME_LOCAL)))
+    single<IRepositoryLocal<List<Word>>> {
+        RepositoryLocal(dataSourceLocal = get())
     }
 }
 
@@ -40,17 +62,17 @@ val androidNetworkStatusModule = module {
 }
 
 val interactorModule = module {
-    single<IInteractor<List<Word>>> {
+    factory<IInteractor<List<Word>>> {
         Interactor(
-            remoteRepository = get(qualifier = named(NAME_REMOTE)),
-            localRepository = get(qualifier = named(NAME_LOCAL)),
+            remoteRepository = get(),
+            localRepository = get(),
             androidNetworkStatus = get()
         )
     }
 }
 
 val viewModelFactoryModule = module {
-    factory {
+    single {
         MainViewModelFactory(interactor = get())
     }
 }

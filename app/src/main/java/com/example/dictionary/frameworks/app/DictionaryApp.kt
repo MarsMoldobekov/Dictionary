@@ -13,6 +13,8 @@ class DictionaryApp : Application() {
             androidContext(this@DictionaryApp)
             modules(
                 listOf(
+                    roomDatabaseModule,
+                    converterModule,
                     dataSourceModule,
                     repositoryModule,
                     androidNetworkStatusModule,

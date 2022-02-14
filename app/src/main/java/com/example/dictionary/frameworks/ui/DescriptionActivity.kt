@@ -17,12 +17,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityDescriptionBinding
-import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import org.koin.android.ext.android.inject
-import java.lang.Exception
 
 class DescriptionActivity : AppCompatActivity() {
     companion object {
