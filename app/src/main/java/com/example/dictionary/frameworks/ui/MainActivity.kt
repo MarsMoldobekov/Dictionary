@@ -3,18 +3,19 @@ package com.example.dictionary.frameworks.ui
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary.R
 import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.utils.convertMeaningsToString
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModel
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.SavedStateViewModelFactory
 import org.koin.android.ext.android.inject
 
+//TODO: change UI word search
 class MainActivity : BaseActivity() {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -31,7 +32,14 @@ class MainActivity : BaseActivity() {
     private val adapter: RecyclerViewAdapter by lazy {
         RecyclerViewAdapter(object : RecyclerViewAdapter.OnListItemClickListener {
             override fun onItemClick(data: Word) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        context = this@MainActivity,
+                        word = data.text!!,
+                        description = convertMeaningsToString(data.meanings!!),
+                        url = data.meanings[0].imageUrl
+                    )
+                )
             }
         })
     }

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary.databinding.RowItemBinding
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.utils.convertMeaningsToString
 
 class RecyclerViewAdapter(
     private val onListItemClickListener: OnListItemClickListener
@@ -46,7 +47,7 @@ class RecyclerViewAdapter(
         fun bind(data: Word) {
             with(viewBinding) {
                 headerTextviewRecyclerItem.text = data.text
-                descriptionTextviewRecyclerItem.text = data.meanings?.get(0)?.translation?.translation
+                descriptionTextviewRecyclerItem.text = convertMeaningsToString(data.meanings!!)
                 root.setOnClickListener { onListItemClickListener.onItemClick(data) }
             }
         }
