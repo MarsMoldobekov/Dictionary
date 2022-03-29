@@ -1,6 +1,7 @@
 package com.example.dictionary.frameworks.di
 
 import androidx.room.Room
+import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.converter.Converter
 import com.example.dictionary.frameworks.converter.DataModelAndEntityConverter
@@ -18,6 +19,7 @@ import com.example.dictionary.interfaceadapters.repositories.IRepository
 import com.example.dictionary.interfaceadapters.repositories.IRepositoryLocal
 import com.example.dictionary.interfaceadapters.repositories.Repository
 import com.example.dictionary.interfaceadapters.repositories.RepositoryLocal
+import com.example.dictionary.interfaceadapters.viewmodels.HistoryViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -62,7 +64,7 @@ val androidNetworkStatusModule = module {
 }
 
 val interactorModule = module {
-    factory<IInteractor<List<Word>>> {
+    factory<IInteractor<AppState>> {
         Interactor(
             remoteRepository = get(),
             localRepository = get(),
@@ -74,5 +76,8 @@ val interactorModule = module {
 val viewModelFactoryModule = module {
     single {
         MainViewModelFactory(interactor = get())
+    }
+    single {
+        HistoryViewModelFactory(interactor = get(), converter = get())
     }
 }

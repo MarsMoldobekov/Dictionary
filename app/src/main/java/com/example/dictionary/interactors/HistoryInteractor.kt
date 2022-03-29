@@ -6,20 +6,19 @@ import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.example.dictionary.interfaceadapters.repositories.IRepository
 import com.example.dictionary.interfaceadapters.repositories.IRepositoryLocal
 
-class Interactor(
-    private val remoteRepository: IRepository<List<Word>>,
-    private val localRepository: IRepositoryLocal<List<Word>>,
+class HistoryInteractor(
+    private val repositoryRemote: IRepository<List<Word>>,
+    private val repositoryLocal: IRepositoryLocal<List<Word>>,
     private val androidNetworkStatus: IAndroidNetworkStatus
 ) : IInteractor<AppState> {
 
     override suspend fun getData(word: String): AppState {
-        val appState: AppState
-        if (androidNetworkStatus.isNetworkAvailable()) {
-            appState = AppState.Success(remoteRepository.getData(word))
-            localRepository.saveToDatabase(appState)
-        } else {
-            appState = AppState.Success(localRepository.getData(word))
-        }
-        return appState
+        return AppState.Success(
+            if (androidNetworkStatus.isNetworkAvailable()) {
+                repositoryRemote
+            } else {
+                repositoryLocal
+            }.getData(word)
+        )
     }
 }

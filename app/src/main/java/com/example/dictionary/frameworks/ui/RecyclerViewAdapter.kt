@@ -9,7 +9,7 @@ import com.example.dictionary.entities.Word
 import com.example.dictionary.frameworks.utils.convertMeaningsToString
 
 class RecyclerViewAdapter(
-    private val onListItemClickListener: OnListItemClickListener
+    private val onListItemClickListener: (Word) -> Unit
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     var data: MutableList<Word> = mutableListOf()
@@ -37,10 +37,6 @@ class RecyclerViewAdapter(
         return data.size
     }
 
-    interface OnListItemClickListener {
-        fun onItemClick(data: Word)
-    }
-
     inner class ViewHolder(private val viewBinding: RowItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
 
@@ -48,30 +44,8 @@ class RecyclerViewAdapter(
             with(viewBinding) {
                 headerTextviewRecyclerItem.text = data.text
                 descriptionTextviewRecyclerItem.text = convertMeaningsToString(data.meanings!!)
-                root.setOnClickListener { onListItemClickListener.onItemClick(data) }
+                root.setOnClickListener { onListItemClickListener(data) }
             }
-        }
-    }
-
-    class WordsDiffUtilCallback(
-        private val oldList: List<Word>,
-        private val newList: List<Word>
-    ) : DiffUtil.Callback() {
-
-        override fun getOldListSize(): Int {
-            return oldList.size
-        }
-
-        override fun getNewListSize(): Int {
-            return newList.size
-        }
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].id == newList[newItemPosition].id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 }
