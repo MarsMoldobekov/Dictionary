@@ -18,16 +18,16 @@ class MainViewModel(
         private const val LIVE_DATA_TAG = "LIVE_DATA_TAG"
     }
 
-    override fun getData(word: String) {
+    override fun getData(word: String, isOnline: Boolean) {
         savedStateHandle[LIVE_DATA_TAG] = AppState.Loading(null)
         cancelJob()
-        viewModelCoroutineScope.launch { searchAsync(word) }
+        viewModelCoroutineScope.launch { searchAsync(word, isOnline) }
     }
 
-    private suspend fun searchAsync(word: String) {
+    private suspend fun searchAsync(word: String, isOnline: Boolean) {
         var result: List<Word>?
         withContext(Dispatchers.IO) {
-            result = interactor.getData(word)
+            result = interactor.getData(word, isOnline)
         }
         savedStateHandle[LIVE_DATA_TAG] = AppState.Success(result)
     }

@@ -19,7 +19,7 @@ abstract class BaseViewModel : ViewModel() {
         viewModelCoroutineScope.coroutineContext.cancelChildren()
     }
 
-    abstract fun getData(word: String)
+    abstract fun getData(word: String, isOnline: Boolean)
 
     abstract fun handleThrowable(throwable: Throwable)
 }

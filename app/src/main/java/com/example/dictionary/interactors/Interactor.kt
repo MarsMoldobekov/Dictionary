@@ -2,19 +2,17 @@ package com.example.dictionary.interactors
 
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
-import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.example.dictionary.interfaceadapters.repositories.IRepository
 import com.example.dictionary.interfaceadapters.repositories.IRepositoryLocal
 
 class Interactor(
     private val remoteRepository: IRepository<List<Word>>,
     private val localRepository: IRepositoryLocal<List<Word>>,
-    private val androidNetworkStatus: IAndroidNetworkStatus
 ) : IInteractor<AppState> {
 
-    override suspend fun getData(word: String): AppState {
+    override suspend fun getData(word: String, isOnline: Boolean): AppState {
         val appState: AppState
-        if (androidNetworkStatus.isNetworkAvailable()) {
+        if (isOnline) {
             appState = AppState.Success(remoteRepository.getData(word))
             localRepository.saveToDatabase(appState)
         } else {

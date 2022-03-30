@@ -13,6 +13,7 @@ import com.example.dictionary.frameworks.room.RoomDatabaseDataSource
 import com.example.dictionary.frameworks.web.AndroidNetworkStatus
 import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.example.dictionary.frameworks.web.WebDataSource
+import com.example.dictionary.interactors.HistoryInteractor
 import com.example.dictionary.interactors.IInteractor
 import com.example.dictionary.interactors.Interactor
 import com.example.dictionary.interfaceadapters.repositories.IRepository
@@ -67,8 +68,13 @@ val interactorModule = module {
     factory<IInteractor<AppState>> {
         Interactor(
             remoteRepository = get(),
-            localRepository = get(),
-            androidNetworkStatus = get()
+            localRepository = get()
+        )
+    }
+    factory {
+        HistoryInteractor(
+            repositoryRemote = get(),
+            repositoryLocal = get()
         )
     }
 }

@@ -42,7 +42,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getData("")
+        viewModel.getData("", androidNetworkStatus.isNetworkAvailable())
     }
 
     override fun setDataToAdapter(data: List<Word>) {

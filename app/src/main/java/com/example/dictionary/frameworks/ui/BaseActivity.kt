@@ -6,20 +6,26 @@ import com.example.dictionary.R
 import com.example.dictionary.databinding.LoadingLayoutBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.web.IAndroidNetworkStatus
 import com.example.dictionary.interactors.IInteractor
 import com.example.dictionary.interfaceadapters.viewmodels.BaseViewModel
+import org.koin.android.ext.android.inject
 
 abstract class BaseActivity<T : AppState, I : IInteractor<T>> : AppCompatActivity() {
     companion object {
         private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
     }
 
+    protected val androidNetworkStatus by inject<IAndroidNetworkStatus>()
     private lateinit var binding: LoadingLayoutBinding
     abstract val viewModel: BaseViewModel
 
     override fun onResume() {
         super.onResume()
         binding = LoadingLayoutBinding.inflate(layoutInflater)
+        if (!androidNetworkStatus.isNetworkAvailable() && isDialogNull()) {
+            showNoInternetConnectionDialog()
+        }
     }
 
     private fun showAlertDialog(title: String, message: String) {

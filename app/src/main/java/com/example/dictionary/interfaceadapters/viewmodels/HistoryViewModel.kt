@@ -21,11 +21,12 @@ class HistoryViewModel(
         return liveDataForViewToObserve
     }
 
-    override fun getData(word: String) {
+    override fun getData(word: String, isOnline: Boolean) {
         liveDataForViewToObserve.value = AppState.Loading(null)
         cancelJob()
         viewModelCoroutineScope.launch {
-            liveDataForViewToObserve.postValue(converter.parseLocalSearchResults(interactor.getData(word)))
+            liveDataForViewToObserve
+                .postValue(converter.parseLocalSearchResults(interactor.getData(word, isOnline)))
         }
     }
 

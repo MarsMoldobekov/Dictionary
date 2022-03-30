@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import coil.ImageLoader
-import coil.request.LoadRequest
+import coil.request.ImageRequest
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -144,7 +144,7 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun useCoilToLoadPhoto(imageView: ImageView, imageLink: String) {
-        val request = LoadRequest.Builder(this)
+        val request = ImageRequest.Builder(this)
             .data("https:$imageLink")
             .target(
                 onStart = {},
@@ -152,6 +152,6 @@ class DescriptionActivity : AppCompatActivity() {
                 onError = { imageView.setImageResource(R.drawable.ic_no_photo_vector) }
             )
             .build()
-        ImageLoader(this).execute(request)
+        ImageLoader(this).enqueue(request)
     }
 }

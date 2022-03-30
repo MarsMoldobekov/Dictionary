@@ -25,7 +25,6 @@ class MainActivity : BaseActivity<AppState, Interactor>() {
     }
 
     private lateinit var activityMainBinding: ActivityMainBinding
-
     private val mainViewModelFactory: MainViewModelFactory by inject()
     override val viewModel: MainViewModel by viewModels {
         SavedStateViewModelFactory(mainViewModelFactory, this)
@@ -36,7 +35,7 @@ class MainActivity : BaseActivity<AppState, Interactor>() {
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
             override fun onClick(wordToSearch: String) {
-                viewModel.getData(wordToSearch)
+                viewModel.getData(wordToSearch, androidNetworkStatus.isNetworkAvailable())
             }
         }
 
