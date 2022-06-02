@@ -6,14 +6,18 @@ import androidx.activity.viewModels
 import com.example.dictionary.databinding.ActivityHistoryBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.di.SCOPE_HISTORY_ACTIVITY
 import com.example.dictionary.interactors.HistoryInteractor
 import com.example.dictionary.interfaceadapters.viewmodels.HistoryViewModel
 import com.example.dictionary.interfaceadapters.viewmodels.HistoryViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.SavedStateViewModelFactory
-import org.koin.android.ext.android.inject
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.getKoin
 
 class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
-    private val historyViewModelFactory by inject<HistoryViewModelFactory>()
+    private val scopeHistoryActivity = getKoin()
+        .createScope(SCOPE_HISTORY_ACTIVITY, named(SCOPE_HISTORY_ACTIVITY))
+    private val historyViewModelFactory = scopeHistoryActivity.get<HistoryViewModelFactory>()
     override val viewModel by viewModels<HistoryViewModel> {
         SavedStateViewModelFactory(historyViewModelFactory, this)
     }
@@ -27,6 +31,11 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
         initViewModel()
         initViews()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scopeHistoryActivity.close()
     }
 
     private fun initViewModel() {
@@ -46,7 +55,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
     }
 
     override fun setDataToAdapter(data: List<Word>) {
-        adapter.data = data as MutableList<Word>
+        adapter.submitList(data)
     }
 
     fun onItemClick(word: Word) {

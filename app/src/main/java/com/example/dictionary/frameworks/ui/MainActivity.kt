@@ -6,26 +6,33 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary.R
-import com.example.dictionary.databinding.ActivityMainBinding
 import com.example.dictionary.entities.AppState
 import com.example.dictionary.entities.Word
+import com.example.dictionary.frameworks.di.SCOPE_MAIN_ACTIVITY
 import com.example.dictionary.frameworks.utils.convertMeaningsToString
+import com.example.dictionary.frameworks.utils.viewById
 import com.example.dictionary.interactors.Interactor
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModel
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.SavedStateViewModelFactory
-import org.koin.android.ext.android.inject
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.koin.android.ext.android.getKoin
+import org.koin.core.qualifier.named
 
-//TODO: change UI word search
 class MainActivity : BaseActivity<AppState, Interactor>() {
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 
-    private lateinit var activityMainBinding: ActivityMainBinding
-    private val mainViewModelFactory: MainViewModelFactory by inject()
+    private val recyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+
+    private val scopeMainActivity = getKoin().createScope(SCOPE_MAIN_ACTIVITY, named(SCOPE_MAIN_ACTIVITY))
+
+    private val mainViewModelFactory = scopeMainActivity.get<MainViewModelFactory>()
     override val viewModel: MainViewModel by viewModels {
         SavedStateViewModelFactory(mainViewModelFactory, this)
     }
@@ -42,21 +49,25 @@ class MainActivity : BaseActivity<AppState, Interactor>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(activityMainBinding.root)
+        setContentView(R.layout.activity_main)
 
-        activityMainBinding.searchFab.setOnClickListener {
+        searchFAB.setOnClickListener {
             SearchDialogFragment.newInstance().apply {
                 this.setOnSearchClickListener(onSearchClickListener)
             }.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
 
-        with(activityMainBinding) {
-            mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
-            mainActivityRecyclerview.adapter = adapter
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(applicationContext)
+            adapter = adapter
         }
 
         viewModel.getLiveData().observe(this) { renderData(it) }
+    }
+
+    override fun onDestroy() {
+        scopeMainActivity.close()
+        super.onDestroy()
     }
 
     fun onItemClick(word: Word) {
@@ -71,7 +82,7 @@ class MainActivity : BaseActivity<AppState, Interactor>() {
     }
 
     override fun setDataToAdapter(data: List<Word>) {
-        adapter.data = data as MutableList<Word>
+        adapter.submitList(data)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

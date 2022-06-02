@@ -2,7 +2,7 @@ package com.example.dictionary.frameworks.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary.databinding.RowItemBinding
 import com.example.dictionary.entities.Word
@@ -12,12 +12,11 @@ class RecyclerViewAdapter(
     private val onListItemClickListener: (Word) -> Unit
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
-    var data: MutableList<Word> = mutableListOf()
-        set(value) {
-            val diffResult = DiffUtil.calculateDiff(WordsDiffUtilCallback(field, value))
-            with(field) { clear(); addAll(value) }
-            diffResult.dispatchUpdatesTo(this)
-        }
+    private val data = AsyncListDiffer(this, WordsDiffUtilCallback())
+
+    fun submitList(list: List<Word>) {
+        data.submitList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -30,11 +29,11 @@ class RecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(data[position])
+        holder.bind(data.currentList[position])
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return data.currentList.size
     }
 
     inner class ViewHolder(private val viewBinding: RowItemBinding) :

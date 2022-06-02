@@ -23,6 +23,7 @@ import com.example.dictionary.interfaceadapters.repositories.RepositoryLocal
 import com.example.dictionary.interfaceadapters.viewmodels.HistoryViewModelFactory
 import com.example.dictionary.interfaceadapters.viewmodels.MainViewModelFactory
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val roomDatabaseModule = module {
@@ -65,25 +66,23 @@ val androidNetworkStatusModule = module {
 }
 
 val interactorModule = module {
-    factory<IInteractor<AppState>> {
-        Interactor(
-            remoteRepository = get(),
-            localRepository = get()
-        )
+    scope(named(SCOPE_MAIN_ACTIVITY)) {
+        scoped<IInteractor<AppState>> {
+            Interactor(remoteRepository = get(), localRepository = get())
+        }
     }
-    factory {
-        HistoryInteractor(
-            repositoryRemote = get(),
-            repositoryLocal = get()
-        )
+    scope(named(SCOPE_HISTORY_ACTIVITY)) {
+        scoped { HistoryInteractor(repositoryRemote = get(), repositoryLocal = get()) }
     }
 }
 
 val viewModelFactoryModule = module {
-    single {
-        MainViewModelFactory(interactor = get())
+    scope(named(SCOPE_MAIN_ACTIVITY)) {
+        scoped { MainViewModelFactory(interactor = getScope(SCOPE_MAIN_ACTIVITY).get()) }
     }
-    single {
-        HistoryViewModelFactory(interactor = get(), converter = get())
+    scope(named(SCOPE_HISTORY_ACTIVITY)) {
+        scoped {
+            HistoryViewModelFactory(interactor = getScope(SCOPE_HISTORY_ACTIVITY).get(), converter = get())
+        }
     }
 }

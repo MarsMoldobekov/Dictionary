@@ -39,9 +39,15 @@ object Versions {
     const val appcompatVersion = "1.4.1"
     const val activityKTXVersion = "1.4.0"
     const val fragmentKTXVersion = "1.4.1"
+    const val testCoreVersion = "1.4.0"
     const val junitVersion = "4.13.2"
+    const val runnerVersion = "1.4.0"
     const val extJunitVersion = "1.1.3"
+    const val extTruthVersion = "1.3.0"
     const val espressoCoreVersion = "3.4.0"
+    const val espressoIntentsVersion = "3.4.0"
+    const val mockitoVersion = "3.2.0"
+    const val robolectricVersion = "4.6"
 }
 
 object Room {
@@ -100,6 +106,12 @@ object Androidx {
 
 object TestImpl {
     const val junit = "junit:junit:${Versions.junitVersion}"
+    const val testCore = "androidx.test:core-ktx:${Versions.testCoreVersion}"
+    const val runner = "androidx.test:runner:${Versions.runnerVersion}"
     const val extJunit = "androidx.test.ext:junit:${Versions.extJunitVersion}"
+    const val extTruth = "androidx.test.ext:truth:${Versions.extTruthVersion}"
     const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espressoCoreVersion}"
+    const val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espressoIntentsVersion}"
+    const val mockito = "org.mockito.kotlin:mockito-kotlin:${Versions.mockitoVersion}"
+    const val robolectric = "org.robolectric:robolectric:${Versions.robolectricVersion}"
 }

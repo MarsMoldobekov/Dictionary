@@ -33,7 +33,7 @@ abstract class BaseActivity<T : AppState, I : IInteractor<T>> : AppCompatActivit
             .show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
     }
 
-    protected fun showNoInternetConnectionDialog() {
+    private fun showNoInternetConnectionDialog() {
         showAlertDialog(
             getString(R.string.dialog_title_device_is_offline),
             getString(R.string.dialog_message_device_is_offline)
